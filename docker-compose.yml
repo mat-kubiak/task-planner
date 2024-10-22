@@ -25,5 +25,18 @@ services:
     ports:
       - $PHPMYADMIN_LOCAL_PORT:$PHPMYADMIN_DOCKER_PORT
 
+  task-service:
+    depends_on:
+      - mysqldb
+    build: ./task-service
+    restart: on-failure
+    env_file: ./.env
+    ports:
+      - $SPRING_LOCAL_PORT:$SPRING_DOCKER_PORT
+    volumes:
+      - .m2:/root/.m2
+    stdin_open: true
+    tty: true
+
 volumes:
   db:
