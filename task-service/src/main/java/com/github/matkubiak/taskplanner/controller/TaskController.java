@@ -3,9 +3,8 @@ package com.github.matkubiak.taskplanner.controller;
 import com.github.matkubiak.taskplanner.model.Task;
 import com.github.matkubiak.taskplanner.model.TaskDTO;
 import com.github.matkubiak.taskplanner.model.TaskNotFoundException;
-import jakarta.websocket.server.PathParam;
+import com.github.matkubiak.taskplanner.model.TaskUpdateDTO;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -44,5 +43,15 @@ public class TaskController {
             return new ResponseEntity<>(String.format("Task of id %d does not exist", taskId), HttpStatus.NOT_FOUND);
         }
         return new ResponseEntity<>("Task deleted successfully", HttpStatus.ACCEPTED);
+    }
+
+    @PutMapping(path="/")
+    public ResponseEntity<Object> updateTask(@RequestBody TaskUpdateDTO taskDto) {
+        try {
+            taskService.updateTask(taskDto);
+        } catch (TaskNotFoundException e) {
+            return new ResponseEntity<>(String.format("Task of id %d does not exist", taskDto.getId()), HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>("Task modified successfully", HttpStatus.OK);
     }
 }

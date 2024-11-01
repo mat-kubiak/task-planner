@@ -29,6 +29,10 @@ public class Task {
         return id;
     }
 
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     public @NotNull @Size(min = 1, max = 255) String getName() {
         return name;
     }
