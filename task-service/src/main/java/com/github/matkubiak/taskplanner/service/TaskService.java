@@ -2,8 +2,10 @@ package com.github.matkubiak.taskplanner.service;
 
 import com.github.matkubiak.taskplanner.model.Task;
 import com.github.matkubiak.taskplanner.model.TaskDTO;
+import com.github.matkubiak.taskplanner.model.TaskNotFoundException;
 import com.github.matkubiak.taskplanner.repository.TaskRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -27,4 +29,11 @@ public class TaskService {
         taskRepository.save(task);
     }
 
+    public void deleteTask(Long taskId) throws TaskNotFoundException {
+        boolean exists = taskRepository.existsById(taskId);
+        if (!exists) {
+            throw new TaskNotFoundException();
+        }
+        taskRepository.deleteById(taskId);
+    }
 }
