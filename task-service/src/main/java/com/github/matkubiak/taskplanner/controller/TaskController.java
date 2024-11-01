@@ -30,6 +30,6 @@ public class TaskController {
     @PostMapping("/")
     public ResponseEntity<Object> createTask(@RequestBody TaskDTO taskDto) {
         taskService.saveTask(taskDto);
-        return new ResponseEntity<>("Task created successfully", HttpStatus.OK);
+        return new ResponseEntity<>("Task created successfully", HttpStatus.CREATED);
     }
 }
