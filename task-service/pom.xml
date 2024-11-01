@@ -8,17 +8,20 @@
 		<version>3.3.4</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>com.github.matkubiak</groupId>
-	<artifactId>taskplanner</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
-	<name>Task Planner</name>
-	<description>TODO project for Java Backend Portfolio</description>
-	<url/>
+	<groupId>com.github.matkubiak.taskplanner</groupId>
+	<artifactId>task-service</artifactId>
+	<version>1.0.0</version>
+	<name>Task Service</name>
+	<description>Task Planner service for task management</description>
+	<url>https://github.com/mat-kubiak/task-planner</url>
 	<licenses>
 		<license/>
 	</licenses>
 	<developers>
-		<developer/>
+		<developer>
+			<name>Mateusz Kubiak</name>
+			<url>https://github.com/mat-kubiak</url>
+		</developer>
 	</developers>
 	<scm>
 		<connection/>
