@@ -1,6 +1,7 @@
 package com.github.matkubiak.taskplanner.controller;
 
 import com.github.matkubiak.taskplanner.model.Task;
+import com.github.matkubiak.taskplanner.model.TaskDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,5 +25,11 @@ public class TaskController {
     public ResponseEntity<List<Task>> getTasks() {
         List<Task> tasks = taskService.getAllTasks();
         return new ResponseEntity<>(tasks, HttpStatus.OK);
+    }
+
+    @PostMapping("/")
+    public ResponseEntity<Object> createTask(@RequestBody TaskDTO taskDto) {
+        taskService.saveTask(taskDto);
+        return new ResponseEntity<>("Task created successfully", HttpStatus.OK);
     }
 }
