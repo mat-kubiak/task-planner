@@ -19,3 +19,9 @@ mv .env.sample .env
 # build and run containers
 docker compose up -d
 ```
+
+
+## License
+
+This project is licensed under the GNU General Public License version 3.
+You can view the full text of the license in the [LICENSE](./LICENSE) file.
