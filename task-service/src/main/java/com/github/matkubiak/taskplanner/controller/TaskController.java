@@ -1,7 +1,7 @@
 package com.github.matkubiak.taskplanner.controller;
 
 import com.github.matkubiak.taskplanner.model.Task;
-import com.github.matkubiak.taskplanner.model.TaskDTO;
+import com.github.matkubiak.taskplanner.model.TaskCreateDTO;
 import com.github.matkubiak.taskplanner.model.TaskNotFoundException;
 import com.github.matkubiak.taskplanner.model.TaskUpdateDTO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +30,7 @@ public class TaskController {
     }
 
     @PostMapping(path="/")
-    public ResponseEntity<Object> createTask(@RequestBody TaskDTO taskDto) {
+    public ResponseEntity<Object> createTask(@RequestBody TaskCreateDTO taskDto) {
         taskService.saveTask(taskDto);
         return new ResponseEntity<>("Task created successfully", HttpStatus.CREATED);
     }

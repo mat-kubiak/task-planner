@@ -1,6 +1,6 @@
 package com.github.matkubiak.taskplanner.model;
 
-public class TaskDTO {
+public class TaskCreateDTO {
 
     private String name;
     private String description;

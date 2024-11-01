@@ -1,7 +1,7 @@
 package com.github.matkubiak.taskplanner.service;
 
 import com.github.matkubiak.taskplanner.model.Task;
-import com.github.matkubiak.taskplanner.model.TaskDTO;
+import com.github.matkubiak.taskplanner.model.TaskCreateDTO;
 import com.github.matkubiak.taskplanner.model.TaskNotFoundException;
 import com.github.matkubiak.taskplanner.model.TaskUpdateDTO;
 import com.github.matkubiak.taskplanner.repository.TaskRepository;
@@ -20,7 +20,7 @@ public class TaskService {
         return taskRepository.findAll();
     }
 
-    public void saveTask(TaskDTO taskDto) {
+    public void saveTask(TaskCreateDTO taskDto) {
         Task task = new Task();
         task.setName(taskDto.getName());
         task.setDescription(taskDto.getDescription());
