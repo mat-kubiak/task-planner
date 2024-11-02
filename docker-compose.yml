@@ -20,7 +20,7 @@ services:
     volumes:
       - db:/var/lib/mysql
 
-  phpmyadmin:
+  dbadmin:
     image: phpmyadmin:5.2
     restart: unless-stopped
     env_file: ./.env
@@ -29,7 +29,7 @@ services:
       - PMA_HOST=taskplanner-mysqldb-1
       - PMA_PORT=$MYSQLDB_DOCKER_PORT
     ports:
-      - $PHPMYADMIN_EXPOSE_PORT:$PHPMYADMIN_DOCKER_PORT
+      - $DBADMIN_EXPOSE_PORT:DBADMIN_DOCKER_PORT
 
   gateway:
     build: ./gateway
