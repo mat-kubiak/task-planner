@@ -6,7 +6,7 @@
 # See LICENSE or visit <https://www.gnu.org/licenses/>.
 #
 
-version: "3.8"
+name: taskplanner
 
 services:
 
