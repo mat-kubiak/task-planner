@@ -6,7 +6,10 @@
 # See LICENSE or visit <https://www.gnu.org/licenses/>.
 #
 
-version: "3.8"
+name: taskplanner
+
+volumes:
+  db:
 
 services:
 
@@ -17,12 +20,10 @@ services:
     environment:
       - MYSQL_ROOT_PASSWORD=$MYSQLDB_ROOT_PASSWORD
       - MYSQL_DATABASE=$MYSQLDB_DATABASE
-    ports:
-      - $MYSQLDB_LOCAL_PORT:$MYSQLDB_DOCKER_PORT
     volumes:
       - db:/var/lib/mysql
 
-  phpmyadmin:
+  dbadmin:
     image: phpmyadmin:5.2
     restart: unless-stopped
     env_file: ./.env
@@ -31,16 +32,27 @@ services:
       - PMA_HOST=taskplanner-mysqldb-1
       - PMA_PORT=$MYSQLDB_DOCKER_PORT
     ports:
-      - $PHPMYADMIN_LOCAL_PORT:$PHPMYADMIN_DOCKER_PORT
+      - $DBADMIN_EXPOSE_PORT:80
+
+  gateway:
+    build: ./gateway
+    restart: on-failure
+    env_file: ./.env
+    ports:
+      - $GATEWAY_EXPOSE_PORT:8080
+    volumes:
+      - .m2:/root/.m2
+    stdin_open: true
+    tty: true
+
+  # services
 
   task-service:
     depends_on:
       - mysqldb
-    build: ./task-service
+    build: ./services/task-service
     restart: on-failure
     env_file: ./.env
-    ports:
-      - $TASK_LOCAL_PORT:$TASK_DOCKER_PORT
     volumes:
       - .m2:/root/.m2
     stdin_open: true
@@ -49,15 +61,10 @@ services:
   user-service:
     depends_on:
       - mysqldb
-    build: ./user-service
+    build: ./services/user-service
     restart: on-failure
     env_file: ./.env
-    ports:
-      - $USER_LOCAL_PORT:$USER_DOCKER_PORT
     volumes:
       - .m2:/root/.m2
     stdin_open: true
     tty: true
-
-volumes:
-  db:
