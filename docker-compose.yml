@@ -8,6 +8,9 @@
 
 name: taskplanner
 
+volumes:
+  db:
+
 services:
 
   mysqldb:
@@ -42,10 +45,12 @@ services:
     stdin_open: true
     tty: true
 
+  # services
+
   task-service:
     depends_on:
       - mysqldb
-    build: ./task-service
+    build: ./services/task-service
     restart: on-failure
     env_file: ./.env
     volumes:
@@ -56,13 +61,10 @@ services:
   user-service:
     depends_on:
       - mysqldb
-    build: ./user-service
+    build: ./services/user-service
     restart: on-failure
     env_file: ./.env
     volumes:
       - .m2:/root/.m2
     stdin_open: true
     tty: true
-
-volumes:
-  db:
