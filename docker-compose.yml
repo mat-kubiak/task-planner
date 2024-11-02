@@ -33,6 +33,17 @@ services:
     ports:
       - $PHPMYADMIN_LOCAL_PORT:$PHPMYADMIN_DOCKER_PORT
 
+  gateway:
+    build: ./gateway
+    restart: on-failure
+    env_file: ./.env
+    ports:
+      - $GATEWAY_LOCAL_PORT:$GATEWAY_DOCKER_PORT
+    volumes:
+      - .m2:/root/.m2
+    stdin_open: true
+    tty: true
+
   task-service:
     depends_on:
       - mysqldb
