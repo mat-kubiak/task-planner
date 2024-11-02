@@ -17,8 +17,6 @@ services:
     environment:
       - MYSQL_ROOT_PASSWORD=$MYSQLDB_ROOT_PASSWORD
       - MYSQL_DATABASE=$MYSQLDB_DATABASE
-    ports:
-      - $MYSQLDB_LOCAL_PORT:$MYSQLDB_DOCKER_PORT
     volumes:
       - db:/var/lib/mysql
 
@@ -31,14 +29,14 @@ services:
       - PMA_HOST=taskplanner-mysqldb-1
       - PMA_PORT=$MYSQLDB_DOCKER_PORT
     ports:
-      - $PHPMYADMIN_LOCAL_PORT:$PHPMYADMIN_DOCKER_PORT
+      - $PHPMYADMIN_EXPOSE_PORT:$PHPMYADMIN_DOCKER_PORT
 
   gateway:
     build: ./gateway
     restart: on-failure
     env_file: ./.env
     ports:
-      - $GATEWAY_LOCAL_PORT:$GATEWAY_DOCKER_PORT
+      - $GATEWAY_EXPOSE_PORT:8080
     volumes:
       - .m2:/root/.m2
     stdin_open: true
@@ -50,8 +48,6 @@ services:
     build: ./task-service
     restart: on-failure
     env_file: ./.env
-    ports:
-      - $TASK_LOCAL_PORT:$TASK_DOCKER_PORT
     volumes:
       - .m2:/root/.m2
     stdin_open: true
@@ -63,8 +59,6 @@ services:
     build: ./user-service
     restart: on-failure
     env_file: ./.env
-    ports:
-      - $USER_LOCAL_PORT:$USER_DOCKER_PORT
     volumes:
       - .m2:/root/.m2
     stdin_open: true
