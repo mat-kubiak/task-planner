@@ -29,7 +29,7 @@ services:
       - PMA_HOST=taskplanner-mysqldb-1
       - PMA_PORT=$MYSQLDB_DOCKER_PORT
     ports:
-      - $DBADMIN_EXPOSE_PORT:DBADMIN_DOCKER_PORT
+      - $DBADMIN_EXPOSE_PORT:80
 
   gateway:
     build: ./gateway
