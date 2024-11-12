@@ -8,6 +8,8 @@
 
 package com.github.matkubiak.taskplanner.controller;
 
+import com.github.matkubiak.taskplanner.model.RegisterDTO;
+import com.github.matkubiak.taskplanner.model.RegistrationException;
 import com.github.matkubiak.taskplanner.model.User;
 import com.github.matkubiak.taskplanner.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,4 +35,14 @@ public class UserController {
         List<User> users = service.getUsers();
         return new ResponseEntity<>(users, HttpStatus.OK);
     }
+
+     @PostMapping(path="/")
+     public ResponseEntity<Object> registerUser(@RequestBody RegisterDTO dto) {
+        try {
+            service.registerUser(dto);
+        } catch (RegistrationException e) {
+            return new ResponseEntity<>("Fatal error: " + e.getMessage(), HttpStatus.CONFLICT);
+        }
+        return new ResponseEntity<>("User registered successfully", HttpStatus.OK);
+     }
 }
