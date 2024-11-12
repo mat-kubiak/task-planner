@@ -8,6 +8,8 @@
 
 package com.github.matkubiak.taskplanner.service;
 
+import com.github.matkubiak.taskplanner.model.RegisterDTO;
+import com.github.matkubiak.taskplanner.model.RegistrationException;
 import com.github.matkubiak.taskplanner.model.User;
 import com.github.matkubiak.taskplanner.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,4 +27,14 @@ public class UserService {
         return repository.findAll();
     }
 
+    public void registerUser(RegisterDTO dto) throws RegistrationException {
+        if (repository.existsByEmail(dto.getEmail())) {
+            throw new RegistrationException("This email is already registered");
+        }
+
+        User user = new User();
+        user.setEmail(dto.getEmail());
+        user.setPassword(dto.getPassword());
+        repository.save(user);
+    }
 }
