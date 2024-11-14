@@ -8,8 +8,8 @@
 
 package com.github.matkubiak.taskplanner.model;
 
-public class RegistrationException extends RuntimeException {
-    public RegistrationException(String message) {
+public class LoginException extends RuntimeException {
+    public LoginException(String message) {
         super(message);
     }
 }
