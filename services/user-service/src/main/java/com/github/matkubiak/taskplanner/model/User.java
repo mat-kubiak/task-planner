@@ -29,8 +29,7 @@ public class User implements UserDetails {
     private String email;
 
     @NotNull
-    @Length(min=8, max=50)
-    private String password;
+    private String passwordHash;
 
     public Long getUserId() {
         return userId;
@@ -48,12 +47,12 @@ public class User implements UserDetails {
         this.email = email;
     }
 
-    public @Length(min = 8, max = 50) String getPassword() {
-        return password;
+    public String getPassword() {
+        return passwordHash;
     }
 
-    public void setPassword(@Length(min = 8, max = 50) String password) {
-        this.password = password;
+    public void setPassword(String passwordHash) {
+        this.passwordHash = passwordHash;
     }
 
     @Override
