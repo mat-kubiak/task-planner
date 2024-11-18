@@ -30,7 +30,7 @@ public class AuthenticationController {
     private AuthenticationService authenticationService;
 
     @PostMapping("/signup")
-    public ResponseEntity<Object> register(@RequestBody RegisterDTO dto) {
+    public ResponseEntity<String> register(@RequestBody RegisterDTO dto) {
         User user;
         try {
             user = authenticationService.signup(dto);
@@ -38,7 +38,7 @@ public class AuthenticationController {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
         }
 
-        return new ResponseEntity<>(user, HttpStatus.OK);
+        return new ResponseEntity<>("User created successfully!", HttpStatus.OK);
     }
 
     @PostMapping("/login")
