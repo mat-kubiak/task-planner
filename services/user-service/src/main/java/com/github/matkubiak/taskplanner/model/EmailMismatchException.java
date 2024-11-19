@@ -8,8 +8,8 @@
 
 package com.github.matkubiak.taskplanner.model;
 
-public class LoginException extends RuntimeException {
-    public LoginException(String message) {
+public class EmailMismatchException extends RuntimeException {
+    public EmailMismatchException(String message) {
         super(message);
     }
 }

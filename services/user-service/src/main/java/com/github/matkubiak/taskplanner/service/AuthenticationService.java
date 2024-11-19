@@ -31,9 +31,9 @@ public class AuthenticationService {
     @Autowired
     private AuthenticationManager authenticationManager;
 
-    public User signup(RegisterDTO input) throws SignupException {
+    public User signup(RegisterDTO input) throws EmailMismatchException {
         if (userRepository.existsByEmail(input.getEmail())) {
-            throw new SignupException("This email is already registered!");
+            throw new EmailMismatchException("This email is already registered!");
         }
 
         User user = new User();
@@ -43,9 +43,9 @@ public class AuthenticationService {
         return userRepository.save(user);
     }
 
-    public User authenticate(LoginDTO input) throws AuthenticationException, LoginException {
+    public User authenticate(LoginDTO input) throws EmailMismatchException {
         if (!userRepository.existsByEmail(input.getEmail())) {
-            throw new LoginException("This email is not registered!");
+            throw new EmailMismatchException("This email is not registered!");
         }
 
         authenticationManager.authenticate(
@@ -54,7 +54,7 @@ public class AuthenticationService {
 
         Optional<User> userOpt = userRepository.findByEmail(input.getEmail());
         if (userOpt.isEmpty()) {
-            throw new LoginException("This email was registered before we authenticated it, but now it's gone. How did you manage to do this?");
+            throw new EmailMismatchException("This email was registered before we authenticated it, but now it's gone. How did you manage to do this?");
         }
 
         return userOpt.get();

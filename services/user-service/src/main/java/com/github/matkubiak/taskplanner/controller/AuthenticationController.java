@@ -34,7 +34,7 @@ public class AuthenticationController {
         User user;
         try {
             user = authenticationService.signup(dto);
-        } catch (SignupException e) {
+        } catch (EmailMismatchException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
         }
 
