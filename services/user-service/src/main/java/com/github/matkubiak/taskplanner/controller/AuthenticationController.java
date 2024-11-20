@@ -32,9 +32,8 @@ public class AuthenticationController {
 
     @PostMapping("/signup")
     public ResponseEntity<String> register(@RequestBody RegisterDTO dto) {
-        User user;
         try {
-            user = authenticationService.signup(dto);
+            authenticationService.signup(dto);
         } catch (EmailMismatchException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
         }

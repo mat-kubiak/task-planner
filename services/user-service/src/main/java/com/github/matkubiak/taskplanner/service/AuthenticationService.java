@@ -31,7 +31,7 @@ public class AuthenticationService {
     @Autowired
     private AuthenticationManager authenticationManager;
 
-    public User signup(RegisterDTO input) throws EmailMismatchException {
+    public void signup(RegisterDTO input) throws EmailMismatchException {
         if (userRepository.existsByEmail(input.getEmail())) {
             throw new EmailMismatchException("This email is already registered!");
         }
@@ -40,7 +40,7 @@ public class AuthenticationService {
         user.setEmail(input.getEmail());
         user.setPassword(passwordEncoder.encode(input.getPassword()));
 
-        return userRepository.save(user);
+        userRepository.save(user);
     }
 
     public User authenticate(LoginDTO input) throws AuthenticationException {
