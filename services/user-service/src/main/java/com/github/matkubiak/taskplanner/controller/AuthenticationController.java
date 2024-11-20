@@ -14,6 +14,7 @@ import com.github.matkubiak.taskplanner.service.JwtService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -42,8 +43,14 @@ public class AuthenticationController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<LoginResponse> authenticate(@RequestBody LoginDTO dto) {
-        User user = authenticationService.authenticate(dto);
+    public ResponseEntity<Object> authenticate(@RequestBody LoginDTO dto) {
+        User user;
+        try {
+            user = authenticationService.authenticate(dto);
+        } catch (AuthenticationException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
+        }
+
         String jwt = jwtService.generateToken(user);
 
         LoginResponse response = new LoginResponse();

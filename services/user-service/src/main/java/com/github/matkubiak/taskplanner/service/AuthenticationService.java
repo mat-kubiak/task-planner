@@ -43,20 +43,15 @@ public class AuthenticationService {
         return userRepository.save(user);
     }
 
-    public User authenticate(LoginDTO input) throws EmailMismatchException {
-        if (!userRepository.existsByEmail(input.getEmail())) {
-            throw new EmailMismatchException("This email is not registered!");
+    public User authenticate(LoginDTO input) throws AuthenticationException {
+        try {
+            authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(input.getEmail(), input.getPassword())
+            );
+        } catch (AuthenticationException e) { // bypasses ExceptionTranslationFilter which intercepts the exception
+            throw e;
         }
 
-        authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(input.getEmail(), input.getPassword())
-        );
-
-        Optional<User> userOpt = userRepository.findByEmail(input.getEmail());
-        if (userOpt.isEmpty()) {
-            throw new EmailMismatchException("This email was registered before we authenticated it, but now it's gone. How did you manage to do this?");
-        }
-
-        return userOpt.get();
+        return userRepository.findByEmail(input.getEmail()).get();
     }
 }
