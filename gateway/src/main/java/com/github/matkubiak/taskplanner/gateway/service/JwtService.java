@@ -20,9 +20,6 @@ import java.util.Base64;
 @Service
 public class JwtService {
 
-    @Value("${security.jwt.expiration-time}")
-    private long jwtExpiration;
-
     private final JwtParser jwtParser;
 
     public JwtService(@Value("${security.jwt.secret-key}") String secretKey) {
