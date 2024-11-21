@@ -8,6 +8,7 @@
 
 package com.github.matkubiak.taskplanner.gateway.filters;
 
+import com.github.matkubiak.taskplanner.gateway.JwtHttpException;
 import com.github.matkubiak.taskplanner.gateway.service.JwtService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
@@ -34,8 +35,12 @@ public class JwtAuthorizationFilter implements GatewayFilter {
         }
 
         String token = authHeader.substring(7);
-        if (!jwtService.validateToken(token)) {
-            exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
+
+        try {
+            jwtService.validateToken(token);
+        } catch (JwtHttpException e) {
+            exchange.getResponse().setStatusCode(e.getCode());
+            exchange.getResponse().getHeaders().add("X-Message", e.getMessage());
             return exchange.getResponse().setComplete();
         }
 

@@ -8,9 +8,12 @@
 
 package com.github.matkubiak.taskplanner.gateway.service;
 
+import com.github.matkubiak.taskplanner.gateway.JwtHttpException;
 import io.jsonwebtoken.*;
+import io.jsonwebtoken.security.SignatureException;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
@@ -31,12 +34,15 @@ public class JwtService {
                 .build();
     }
 
-    public boolean validateToken(String token) {
+    public void validateToken(String token) throws JwtHttpException {
         try {
             jwtParser.parse(token);
-            return true;
-        } catch (Exception e) {
-            return false;
+        } catch (MalformedJwtException | IllegalArgumentException e) {
+            throw new JwtHttpException("Invalid token format", HttpStatus.BAD_REQUEST);
+        } catch (SignatureException | SecurityException e) {
+            throw new JwtHttpException("Token verification failed", HttpStatus.UNAUTHORIZED);
+        } catch (ExpiredJwtException e) {
+            throw new JwtHttpException("Token expired", HttpStatus.UNAUTHORIZED);
         }
     }
 }
