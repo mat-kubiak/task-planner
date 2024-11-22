@@ -34,9 +34,9 @@ public class JwtService {
                 .build();
     }
 
-    public void validateToken(String token) throws JwtHttpException {
+    public Claims parseTokenClaims(String token) throws JwtHttpException {
         try {
-            jwtParser.parse(token);
+            return jwtParser.parseSignedClaims(token).getPayload();
         } catch (MalformedJwtException | IllegalArgumentException e) {
             throw new JwtHttpException("Invalid token format", HttpStatus.BAD_REQUEST);
         } catch (SignatureException | SecurityException e) {
