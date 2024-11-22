@@ -30,6 +30,11 @@ public class GatewayApplication {
 	@Bean
 	public RouteLocator myRoutes(RouteLocatorBuilder builder) {
 		return builder.routes()
+				.route("auth-health", r -> r
+						.path("/api/auth/health")
+						.filters(f -> f.setPath("/health"))
+						.uri("http://user-service:8080"))
+
 				.route("auth", r -> r
 						.path("/api/auth/**")
 						.filters(f -> f.rewritePath("/api/auth/(?<segment>.*)", "/${segment}"))
