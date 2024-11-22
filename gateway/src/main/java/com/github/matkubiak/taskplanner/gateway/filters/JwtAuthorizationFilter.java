@@ -48,6 +48,7 @@ public class JwtAuthorizationFilter implements GatewayFilter {
         }
 
         ServerHttpRequest mutatedRequest = exchange.getRequest().mutate()
+                .headers(httpHeaders -> httpHeaders.remove(HttpHeaders.AUTHORIZATION))
                 .header("X-Subject", claims.getSubject())
                 .build();
 
