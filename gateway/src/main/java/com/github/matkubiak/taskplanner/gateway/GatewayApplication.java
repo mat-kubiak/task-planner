@@ -35,6 +35,11 @@ public class GatewayApplication {
 						.filters(f -> f.rewritePath("/api/auth/(?<segment>.*)", "/${segment}"))
 						.uri("http://user-service:8080/"))
 
+				.route("task-health", r -> r
+					.path("/api/tasks/health")
+					.filters(f -> f.setPath("/health"))
+					.uri("http://task-service:8080"))
+
 				.route("tasks", r -> r
 						.path("/api/tasks/**")
 						.filters(f -> f
