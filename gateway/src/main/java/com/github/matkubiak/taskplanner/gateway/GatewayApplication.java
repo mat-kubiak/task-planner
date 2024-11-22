@@ -24,18 +24,6 @@ public class GatewayApplication {
 	@Bean
 	public RouteLocator myRoutes(RouteLocatorBuilder builder) {
 		return builder.routes()
-				.route(p -> p
-						.path("/api/tasks")
-						.uri("http://task-service:8080/api/tasks/"))
-				.route(p -> p
-						.path("/api/tasks/health")
-						.uri("http://task-service:8080/api/tasks/health"))
-				.route(p -> p
-						.path("/api/users")
-						.uri("http://user-service:8080/api/users/"))
-				.route(p -> p
-						.path("/api/users/health")
-						.uri("http://user-service:8080/api/users/health"))
 				.build();
 	}
 
