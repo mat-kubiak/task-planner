@@ -26,24 +26,24 @@ public class TaskController {
     @Autowired
     private TaskService taskService;
 
-    @GetMapping(path="/health")
+    @GetMapping("/health")
     public ResponseEntity<Object> healthCheck() {
         return new ResponseEntity<>("Service is up and running!", HttpStatus.OK);
     }
 
-    @GetMapping(path="/")
+    @GetMapping("/")
     public ResponseEntity<List<Task>> getTasks() {
         List<Task> tasks = taskService.getAllTasks();
         return new ResponseEntity<>(tasks, HttpStatus.OK);
     }
 
-    @PostMapping(path="/")
+    @PostMapping("/")
     public ResponseEntity<Object> createTask(@RequestBody TaskCreateDTO taskDto) {
         taskService.saveTask(taskDto);
         return new ResponseEntity<>("Task created successfully", HttpStatus.CREATED);
     }
 
-    @DeleteMapping(path="/{taskId}")
+    @DeleteMapping("/{taskId}")
     public ResponseEntity<Object> deleteTask(@PathVariable(name="taskId") Long taskId) {
         try {
             taskService.deleteTask(taskId);
@@ -53,7 +53,7 @@ public class TaskController {
         return new ResponseEntity<>("Task deleted successfully", HttpStatus.ACCEPTED);
     }
 
-    @PutMapping(path="/")
+    @PutMapping("/")
     public ResponseEntity<Object> updateTask(@RequestBody TaskUpdateDTO taskDto) {
         try {
             taskService.updateTask(taskDto);

@@ -8,14 +8,20 @@
 
 package com.github.matkubiak.taskplanner.gateway;
 
+import com.github.matkubiak.taskplanner.gateway.filters.JwtAuthorizationFilter;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.route.RouteLocator;
 import org.springframework.cloud.gateway.route.builder.RouteLocatorBuilder;
 import org.springframework.context.annotation.Bean;
 
 @SpringBootApplication
 public class GatewayApplication {
+
+	@Autowired
+	private GatewayFilter jwtAuthorizationFilter;
 
 	public static void main(String[] args) {
 		SpringApplication.run(GatewayApplication.class, args);
@@ -24,18 +30,28 @@ public class GatewayApplication {
 	@Bean
 	public RouteLocator myRoutes(RouteLocatorBuilder builder) {
 		return builder.routes()
-				.route(p -> p
-						.path("/api/tasks")
-						.uri("http://task-service:8080/api/tasks/"))
-				.route(p -> p
-						.path("/api/tasks/health")
-						.uri("http://task-service:8080/api/tasks/health"))
-				.route(p -> p
-						.path("/api/users")
-						.uri("http://user-service:8080/api/users/"))
-				.route(p -> p
-						.path("/api/users/health")
-						.uri("http://user-service:8080/api/users/health"))
+				.route("auth-health", r -> r
+						.path("/api/auth/health")
+						.filters(f -> f.setPath("/health"))
+						.uri("http://user-service:8080"))
+
+				.route("auth", r -> r
+						.path("/api/auth/**")
+						.filters(f -> f.rewritePath("/api/auth/(?<segment>.*)", "/${segment}"))
+						.uri("http://user-service:8080/"))
+
+				.route("task-health", r -> r
+					.path("/api/tasks/health")
+					.filters(f -> f.setPath("/health"))
+					.uri("http://task-service:8080"))
+
+				.route("tasks", r -> r
+						.path("/api/tasks/**")
+						.filters(f -> f
+								.rewritePath("/api/tasks/(?<segment>.*)", "/${segment}")
+								.filter(jwtAuthorizationFilter))
+						.uri("http://task-service:8080"))
+
 				.build();
 	}
 
