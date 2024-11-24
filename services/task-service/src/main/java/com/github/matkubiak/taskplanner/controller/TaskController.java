@@ -32,33 +32,42 @@ public class TaskController {
     }
 
     @GetMapping("/")
-    public ResponseEntity<List<Task>> getTasks() {
-        List<Task> tasks = taskService.getAllTasks();
+    public ResponseEntity<List<Task>> getTasks(@RequestHeader("X-Subject") Long userId) {
+        List<Task> tasks = taskService.getAllUserTasks(userId);
         return new ResponseEntity<>(tasks, HttpStatus.OK);
     }
 
     @PostMapping("/")
-    public ResponseEntity<Object> createTask(@RequestBody TaskCreateDTO taskDto) {
-        taskService.saveTask(taskDto);
+    public ResponseEntity<Object> createTask(
+            @RequestHeader("X-Subject") Long userId,
+            @RequestBody TaskCreateDTO taskDto) {
+
+        taskService.saveTask(userId, taskDto);
         return new ResponseEntity<>("Task created successfully", HttpStatus.CREATED);
     }
 
     @DeleteMapping("/{taskId}")
-    public ResponseEntity<Object> deleteTask(@PathVariable(name="taskId") Long taskId) {
+    public ResponseEntity<Object> deleteTask(
+            @RequestHeader("X-Subject") Long userId,
+            @PathVariable(name="taskId") Long taskId) {
+
         try {
-            taskService.deleteTask(taskId);
+            taskService.deleteTask(userId, taskId);
         } catch (TaskNotFoundException e) {
-            return new ResponseEntity<>(String.format("Task of id %d does not exist", taskId), HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(String.format("Task of id %d does not exist for current user", taskId), HttpStatus.NOT_FOUND);
         }
         return new ResponseEntity<>("Task deleted successfully", HttpStatus.ACCEPTED);
     }
 
     @PutMapping("/")
-    public ResponseEntity<Object> updateTask(@RequestBody TaskUpdateDTO taskDto) {
+    public ResponseEntity<Object> updateTask(
+            @RequestHeader("X-Subject") Long userId,
+            @RequestBody TaskUpdateDTO taskDto) {
+
         try {
-            taskService.updateTask(taskDto);
+            taskService.updateTask(userId, taskDto);
         } catch (TaskNotFoundException e) {
-            return new ResponseEntity<>(String.format("Task of id %d does not exist", taskDto.getId()), HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(String.format("Task of id %d does not exist for current user", taskDto.getId()), HttpStatus.NOT_FOUND);
         }
         return new ResponseEntity<>("Task modified successfully", HttpStatus.OK);
     }
