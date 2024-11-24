@@ -9,7 +9,6 @@
 package com.github.matkubiak.taskplanner.service;
 
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import java.util.Date;
 
@@ -38,12 +37,11 @@ public class JwtService {
     }
 
     public String generateToken(UserDetails userDetails) {
-        return Jwts
-                .builder()
-                .setSubject(userDetails.getUsername())
-                .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + jwtExpiration))
-                .signWith(secretKey, SignatureAlgorithm.HS256)
-                .compact();
+        return Jwts.builder()
+            .subject(userDetails.getUsername())
+            .issuedAt(new Date(System.currentTimeMillis()))
+            .expiration(new Date(System.currentTimeMillis() + jwtExpiration))
+            .signWith(secretKey)
+            .compact();
     }
 }
