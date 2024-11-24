@@ -54,7 +54,7 @@ public class TaskController {
         try {
             taskService.deleteTask(userId, taskId);
         } catch (TaskNotFoundException e) {
-            return new ResponseEntity<>(String.format("Task of id %d does not exist for current user", taskId), HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(String.format("Task with id %d does not exist or is not owned by current user", taskId), HttpStatus.NOT_FOUND);
         }
         return new ResponseEntity<>("Task deleted successfully", HttpStatus.ACCEPTED);
     }
@@ -67,7 +67,7 @@ public class TaskController {
         try {
             taskService.updateTask(userId, taskDto);
         } catch (TaskNotFoundException e) {
-            return new ResponseEntity<>(String.format("Task of id %d does not exist for current user", taskDto.getId()), HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(String.format("Task with id %d does not exist or is not owned by current user", taskDto.getId()), HttpStatus.NOT_FOUND);
         }
         return new ResponseEntity<>("Task modified successfully", HttpStatus.OK);
     }
