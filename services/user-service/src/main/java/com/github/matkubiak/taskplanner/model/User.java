@@ -12,13 +12,12 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.List;
 
 @Entity
-public class User implements UserDetails {
+public class User implements ExtendedUserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -63,6 +62,11 @@ public class User implements UserDetails {
     @Override
     public String getUsername() {
         return email;
+    }
+
+    @Override
+    public Long getId() {
+        return userId;
     }
 
     @Override
