@@ -8,12 +8,12 @@
 
 package com.github.matkubiak.taskplanner.service;
 
+import com.github.matkubiak.taskplanner.model.ExtendedUserDetails;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
@@ -36,9 +36,9 @@ public class JwtService {
         return jwtExpiration;
     }
 
-    public String generateToken(UserDetails userDetails) {
+    public String generateToken(ExtendedUserDetails userDetails) {
         return Jwts.builder()
-            .subject(userDetails.getUsername())
+            .subject(String.valueOf(userDetails.getId()))
             .issuedAt(new Date(System.currentTimeMillis()))
             .expiration(new Date(System.currentTimeMillis() + jwtExpiration))
             .signWith(secretKey)
