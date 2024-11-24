@@ -8,6 +8,7 @@
 
 package com.github.matkubiak.taskplanner.controller;
 
+import com.github.matkubiak.taskplanner.model.UserNotFoundException;
 import com.github.matkubiak.taskplanner.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -23,6 +24,15 @@ public class UserController {
     @GetMapping("/health")
     public ResponseEntity<Object> healthCheck() {
         return new ResponseEntity<>("Service is up and running!", HttpStatus.OK);
+    }
+
+    @GetMapping("/")
+    public ResponseEntity<Object> getUserDetails(@RequestHeader("X-Subject") Long userId) {
+        try {
+            return new ResponseEntity<>(userService.getUserDetails(userId), HttpStatus.OK);
+        } catch (UserNotFoundException e) {
+            return new ResponseEntity<>("Account not found. The account appears to be missing or has been deleted.", HttpStatus.NOT_FOUND);
+        }
     }
 
 }
