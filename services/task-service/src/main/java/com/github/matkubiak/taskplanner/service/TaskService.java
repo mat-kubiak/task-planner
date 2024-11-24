@@ -8,15 +8,13 @@
 
 package com.github.matkubiak.taskplanner.service;
 
-import com.github.matkubiak.taskplanner.model.Task;
-import com.github.matkubiak.taskplanner.model.TaskCreateDTO;
-import com.github.matkubiak.taskplanner.model.TaskNotFoundException;
-import com.github.matkubiak.taskplanner.model.TaskUpdateDTO;
+import com.github.matkubiak.taskplanner.model.*;
 import com.github.matkubiak.taskplanner.repository.TaskRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class TaskService {
@@ -24,12 +22,13 @@ public class TaskService {
     @Autowired
     private TaskRepository taskRepository;
 
-    public List<Task> getAllTasks() {
-        return taskRepository.findAll();
+    public List<Task> getAllUserTasks(Long userId) {
+        return taskRepository.findAllByUserId(userId);
     }
 
-    public void saveTask(TaskCreateDTO taskDto) {
+    public void saveTask(Long userId, TaskCreateDTO taskDto) {
         Task task = new Task();
+        task.setUserId(userId);
         task.setName(taskDto.getName());
         task.setDescription(taskDto.getDescription());
         task.setState(false);
@@ -37,22 +36,21 @@ public class TaskService {
         taskRepository.save(task);
     }
 
-    public void deleteTask(Long taskId) throws TaskNotFoundException {
-        boolean exists = taskRepository.existsById(taskId);
-        if (!exists) {
+    public void deleteTask(Long userId, Long taskId) throws TaskNotFoundException {
+        if (!taskRepository.existsByIdAndUserId(taskId, userId)) {
             throw new TaskNotFoundException();
         }
         taskRepository.deleteById(taskId);
     }
 
-    public void updateTask(TaskUpdateDTO taskDto) throws TaskNotFoundException {
-        boolean exists = taskRepository.existsById(taskDto.getId());
-        if (!exists) {
+    public void updateTask(Long userId, TaskUpdateDTO taskDto) throws TaskNotFoundException {
+        if (!taskRepository.existsByIdAndUserId(taskDto.getId(), userId)) {
             throw new TaskNotFoundException();
         }
 
         Task task = new Task();
         task.setId(taskDto.getId());
+        task.setUserId(userId);
         task.setName(taskDto.getName());
         task.setDescription(taskDto.getDescription());
         task.setState(taskDto.getState());
