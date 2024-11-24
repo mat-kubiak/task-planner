@@ -23,6 +23,9 @@ public class Task {
     private Long id;
 
     @NotNull
+    private Long userId;
+
+    @NotNull
     @Size(min = 1, max = 255)
     private String name;
 
@@ -63,5 +66,13 @@ public class Task {
 
     public void setState(boolean state) {
         this.state = state;
+    }
+
+    public @NotNull Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(@NotNull Long userId) {
+        this.userId = userId;
     }
 }
