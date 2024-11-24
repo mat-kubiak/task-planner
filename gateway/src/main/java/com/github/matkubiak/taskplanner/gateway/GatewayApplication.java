@@ -33,12 +33,12 @@ public class GatewayApplication {
 				.route("auth-health", r -> r
 						.path("/api/auth/health")
 						.filters(f -> f.setPath("/health"))
-						.uri("http://user-service:8080"))
+						.uri("http://auth-service:8080"))
 
 				.route("auth", r -> r
 						.path("/api/auth/**")
 						.filters(f -> f.rewritePath("/api/auth/(?<segment>.*)", "/${segment}"))
-						.uri("http://user-service:8080/"))
+						.uri("http://auth-service:8080/"))
 
 				.route("task-health", r -> r
 					.path("/api/tasks/health")

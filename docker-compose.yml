@@ -58,10 +58,10 @@ services:
     stdin_open: true
     tty: true
 
-  user-service:
+  auth-service:
     depends_on:
       - mysqldb
-    build: ./services/user-service
+    build: ./services/auth-service
     restart: on-failure
     env_file: ./.env
     volumes:

@@ -9,10 +9,10 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.github.matkubiak.taskplanner</groupId>
-	<artifactId>user-service</artifactId>
+	<artifactId>auth-service</artifactId>
 	<version>0.1.0</version>
-	<name>User Service</name>
-	<description>Task Planner service for user management</description>
+	<name>Auth Service</name>
+	<description>Task Planner service for user account creation and authentication</description>
 	<url>https://github.com/mat-kubiak/task-planner</url>
 	<licenses>
 		<license>
