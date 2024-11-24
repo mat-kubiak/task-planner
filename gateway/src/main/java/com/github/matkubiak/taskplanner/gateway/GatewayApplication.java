@@ -40,12 +40,24 @@ public class GatewayApplication {
 						.filters(f -> f.rewritePath("/api/auth/(?<segment>.*)", "/${segment}"))
 						.uri("http://auth-service:8080/"))
 
+				.route("user-health", r -> r
+						.path("/api/users/health")
+						.filters(f -> f.setPath("/health"))
+						.uri("http://user-service:8080"))
+
+				.route("user", r -> r
+						.path("/api/users/**")
+						.filters(f -> f
+								.rewritePath("/api/users/(?<segment>.*)", "/${segment}")
+								.filter(jwtAuthorizationFilter))
+						.uri("http://user-service:8080/"))
+
 				.route("task-health", r -> r
 					.path("/api/tasks/health")
 					.filters(f -> f.setPath("/health"))
 					.uri("http://task-service:8080"))
 
-				.route("tasks", r -> r
+				.route("task", r -> r
 						.path("/api/tasks/**")
 						.filters(f -> f
 								.rewritePath("/api/tasks/(?<segment>.*)", "/${segment}")
