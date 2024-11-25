@@ -23,7 +23,7 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
-    public UserResponse getUserDetails(Long userId) {
+    public UserResponse getUserDetails(Long userId) throws UserNotFoundException {
         Optional<User> userOpt = userRepository.findById(userId);
 
         if (userOpt.isEmpty()) {
@@ -37,6 +37,13 @@ public class UserService {
         response.setEmail(user.getEmail());
 
         return response;
+    }
+
+    public void deleteAccount(Long userId) throws UserNotFoundException {
+        if (!userRepository.existsById(userId)) {
+            throw new UserNotFoundException();
+        }
+        userRepository.deleteById(userId);
     }
 
 }

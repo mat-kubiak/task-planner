@@ -35,4 +35,14 @@ public class UserController {
         }
     }
 
+    @DeleteMapping("/")
+    public ResponseEntity<String> deleteUserAccount(@RequestHeader("X-Subject") Long userId) {
+        try {
+            userService.deleteAccount(userId);
+            return new ResponseEntity<>("Account deleted successfully", HttpStatus.OK);
+        } catch (UserNotFoundException e) {
+            return new ResponseEntity<>("Account not found. The account appears to be missing or has already been deleted.", HttpStatus.NOT_FOUND);
+        }
+    }
+
 }
