@@ -34,6 +34,11 @@ services:
     ports:
       - $DBADMIN_EXPOSE_PORT:80
 
+  rabbitmq:
+    image: rabbitmq:4.0-management-alpine
+    ports:
+      - 8080:15672
+
   gateway:
     build: ./gateway
     restart: on-failure
