@@ -38,6 +38,10 @@ services:
     image: rabbitmq:4.0-management-alpine
     ports:
       - 8080:15672
+    env_file: ./.env
+    environment:
+      - RABBITMQ_DEFAULT_USER=$RABBIT_USER
+      - RABBITMQ_DEFAULT_PASS=$RABBIT_PASS
 
   gateway:
     build: ./gateway
