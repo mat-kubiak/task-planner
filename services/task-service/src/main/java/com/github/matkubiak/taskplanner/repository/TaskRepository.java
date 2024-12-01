@@ -21,4 +21,6 @@ public interface TaskRepository extends JpaRepository<Task, Long> {
 
     boolean existsByIdAndUserId(Long id, Long userId);
 
+    void deleteAllByUserId(Long userId);
+
 }
