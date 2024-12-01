@@ -15,6 +15,7 @@ import com.github.matkubiak.taskplanner.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.Optional;
 
 @Service
@@ -22,6 +23,9 @@ public class UserService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private EventPublisherService eventPublisherService;
 
     public UserResponse getUserDetails(Long userId) throws UserNotFoundException {
         Optional<User> userOpt = userRepository.findById(userId);
@@ -39,10 +43,12 @@ public class UserService {
         return response;
     }
 
-    public void deleteAccount(Long userId) throws UserNotFoundException {
+    public void deleteAccount(Long userId) throws UserNotFoundException, IOException {
         if (!userRepository.existsById(userId)) {
             throw new UserNotFoundException();
         }
+
+        eventPublisherService.publish(String.valueOf(userId));
         userRepository.deleteById(userId);
     }
 
