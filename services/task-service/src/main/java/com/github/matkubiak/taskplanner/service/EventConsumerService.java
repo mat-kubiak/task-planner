@@ -16,6 +16,10 @@ import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionDefinition;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import java.io.IOException;
 
@@ -24,6 +28,9 @@ public class EventConsumerService implements DisposableBean {
 
     @Autowired
     TaskService taskService;
+
+    @Autowired
+    private PlatformTransactionManager transactionManager;
 
     private final static String QUEUE_NAME = "deleted_userid";
 
@@ -48,11 +55,18 @@ public class EventConsumerService implements DisposableBean {
         DeliverCallback deliverCallback = (consumerTag, delivery) -> {
             Long userId = Long.valueOf(new String(delivery.getBody(), "UTF-8"));
 
+            DefaultTransactionDefinition def = new DefaultTransactionDefinition();
+            def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
+
+            TransactionStatus status = transactionManager.getTransaction(def);
+
             try {
                 taskService.deleteAllUserTasks(userId);
                 System.out.println("Successfully deleted tasks of user: " + userId);
+                transactionManager.commit(status);
             } catch (Exception e) {
                 System.err.println("There was a problem with deleting tasks of user " + userId + ": " + e);
+                transactionManager.rollback(status);
             }
         };
         channel.basicConsume(QUEUE_NAME, true, deliverCallback, consumerTag -> { });
@@ -64,5 +78,3 @@ public class EventConsumerService implements DisposableBean {
         connection.close();
     }
 }
-
-
