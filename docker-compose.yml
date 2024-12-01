@@ -37,7 +37,7 @@ services:
   rabbitmq:
     image: rabbitmq:4.0-management-alpine
     ports:
-      - 8080:15672
+      - 8082:15672
     env_file: ./.env
     environment:
       - RABBITMQ_DEFAULT_USER=$RABBIT_USER
@@ -59,6 +59,7 @@ services:
   task-service:
     depends_on:
       - mysqldb
+      - rabbitmq
     build: ./services/task-service
     restart: on-failure
     env_file: ./.env
@@ -81,6 +82,7 @@ services:
   user-service:
     depends_on:
       - mysqldb
+      - rabbitmq
     build: ./services/user-service
     restart: on-failure
     env_file: ./.env
