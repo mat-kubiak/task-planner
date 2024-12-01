@@ -8,10 +8,7 @@
 
 package com.github.matkubiak.taskplanner.service;
 
-import com.rabbitmq.client.Channel;
-import com.rabbitmq.client.Connection;
-import com.rabbitmq.client.ConnectionFactory;
-import com.rabbitmq.client.DeliverCallback;
+import com.rabbitmq.client.*;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -22,6 +19,7 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 
 @Service
 public class EventConsumerService implements DisposableBean {
@@ -52,24 +50,26 @@ public class EventConsumerService implements DisposableBean {
             System.err.println("RabbitMQ connection failed: " + e);
         }
 
-        DeliverCallback deliverCallback = (consumerTag, delivery) -> {
-            Long userId = Long.valueOf(new String(delivery.getBody(), "UTF-8"));
-
-            DefaultTransactionDefinition def = new DefaultTransactionDefinition();
-            def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
-
-            TransactionStatus status = transactionManager.getTransaction(def);
-
-            try {
-                taskService.deleteAllUserTasks(userId);
-                System.out.println("Successfully deleted tasks of user: " + userId);
-                transactionManager.commit(status);
-            } catch (Exception e) {
-                System.err.println("There was a problem with deleting tasks of user " + userId + ": " + e);
-                transactionManager.rollback(status);
-            }
-        };
+        DeliverCallback deliverCallback = this::onDelete;
         channel.basicConsume(QUEUE_NAME, true, deliverCallback, consumerTag -> { });
+    }
+
+    private void onDelete(String consumerTag, Delivery delivery) throws UnsupportedEncodingException {
+        Long userId = Long.valueOf(new String(delivery.getBody(), "UTF-8"));
+
+        DefaultTransactionDefinition def = new DefaultTransactionDefinition();
+        def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
+
+        TransactionStatus status = transactionManager.getTransaction(def);
+
+        try {
+            taskService.deleteAllUserTasks(userId);
+            System.out.println("Successfully deleted tasks of user: " + userId);
+            transactionManager.commit(status);
+        } catch (Exception e) {
+            System.err.println("There was a problem with deleting tasks of user " + userId + ": " + e);
+            transactionManager.rollback(status);
+        }
     }
 
     @Override
