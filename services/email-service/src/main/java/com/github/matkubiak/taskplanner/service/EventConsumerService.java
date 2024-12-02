@@ -9,7 +9,9 @@
 package com.github.matkubiak.taskplanner.service;
 
 import com.rabbitmq.client.*;
+import jakarta.mail.MessagingException;
 import org.springframework.beans.factory.DisposableBean;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +20,9 @@ import java.io.UnsupportedEncodingException;
 
 @Service
 public class EventConsumerService implements DisposableBean {
+
+    @Autowired
+    EmailSenderService emailSenderService;
 
     private final static String QUEUE_NAME = "email";
 
@@ -45,7 +50,13 @@ public class EventConsumerService implements DisposableBean {
 
     private void onEvent(String consumerTag, Delivery delivery) throws UnsupportedEncodingException {
         String destinationAddress = new String(delivery.getBody(), "UTF-8");
-        System.out.println("Sending email to: " + destinationAddress);
+
+        try {
+            emailSenderService.sendHtmlEmail(destinationAddress, "Welcome!", "<h1>Congratulations!</h1><br/>You have just created an account in TaskPlanner!");
+            System.out.printf("Sent email to: %s\n", destinationAddress);
+        } catch (MessagingException e) {
+            System.err.printf("Sending email to %s failed: %s\n", destinationAddress, e);
+        }
     }
 
     @Override
