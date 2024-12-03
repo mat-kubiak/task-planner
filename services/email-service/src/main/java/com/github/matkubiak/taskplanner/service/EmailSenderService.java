@@ -59,6 +59,10 @@ public class EmailSenderService {
         String subject = "";
 
         switch (event.getType()) {
+            case DEBUG -> {
+                templateName = "debug.html";
+                subject = "Debug Message";
+            }
             default -> throw new IllegalStateException("Unexpected EmailRequest type: " + event.getType());
         }
 

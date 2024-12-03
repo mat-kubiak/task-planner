@@ -19,7 +19,9 @@ public class EmailRequest {
 
     private String username;
 
-    public enum EmailType {}
+    public enum EmailType {
+        DEBUG,
+    }
 
     public static EmailRequest fromJson(String jsonString) throws JSONException {
         JSONObject jsonObject = new JSONObject(jsonString);
