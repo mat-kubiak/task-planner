@@ -52,13 +52,12 @@ public class EventConsumer implements DisposableBean {
         channel.basicConsume(QUEUE_NAME, true, deliverCallback, consumerTag -> { });
     }
 
-    private void onEvent(String consumerTag, Delivery delivery) throws UnsupportedEncodingException {
-        String payload = new String(delivery.getBody(), "UTF-8");
-
+    private void onEvent(String consumerTag, Delivery delivery) {
         EmailRequest emailRequest = null;
         try {
+            String payload = new String(delivery.getBody(), "UTF-8");
             emailRequest = EmailRequest.fromJson(payload);
-        } catch (JSONException e) {
+        } catch (JSONException | UnsupportedEncodingException e) {
             System.out.printf("Parsing email request failed: %s\n", e);
             return;
         }
