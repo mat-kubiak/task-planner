@@ -13,6 +13,7 @@ import com.github.matkubiak.taskplanner.service.EmailSenderService;
 import com.rabbitmq.client.*;
 import freemarker.template.TemplateException;
 import jakarta.mail.MessagingException;
+import org.json.JSONException;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -53,13 +54,20 @@ public class EventConsumer implements DisposableBean {
 
     private void onEvent(String consumerTag, Delivery delivery) throws UnsupportedEncodingException {
         String payload = new String(delivery.getBody(), "UTF-8");
-        EmailRequest emailRequest = EmailRequest.fromJson(payload);
+
+        EmailRequest emailRequest = null;
+        try {
+            emailRequest = EmailRequest.fromJson(payload);
+        } catch (JSONException e) {
+            System.out.printf("Parsing email request failed: %s\n", e);
+            return;
+        }
 
         try {
             emailSenderService.sendEmail(emailRequest);
-            System.out.printf("Sent %s email to: %s%n", emailRequest.getType(), emailRequest.getAddress());
+            System.out.printf("Sent %s email to: %s\n", emailRequest.getType(), emailRequest.getAddress());
         } catch (MessagingException | IOException | TemplateException e) {
-            System.err.printf("Sent email failed: %s", e);
+            System.out.printf("Sent email failed: %s\n", e);
         }
     }
 
