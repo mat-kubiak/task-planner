@@ -8,8 +8,10 @@
 
 package com.github.matkubiak.taskplanner.messaging;
 
+import com.github.matkubiak.taskplanner.payload.EmailRequest;
 import com.github.matkubiak.taskplanner.service.EmailSenderService;
 import com.rabbitmq.client.*;
+import freemarker.template.TemplateException;
 import jakarta.mail.MessagingException;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,13 +52,14 @@ public class EventConsumer implements DisposableBean {
     }
 
     private void onEvent(String consumerTag, Delivery delivery) throws UnsupportedEncodingException {
-        String destinationAddress = new String(delivery.getBody(), "UTF-8");
+        String payload = new String(delivery.getBody(), "UTF-8");
+        EmailRequest emailRequest = EmailRequest.fromJson(payload);
 
         try {
-            emailSenderService.sendHtmlEmail(destinationAddress, "Welcome!", "<h1>Congratulations!</h1><br/>You have just created an account in TaskPlanner!");
-            System.out.printf("Sent email to: %s\n", destinationAddress);
-        } catch (MessagingException e) {
-            System.err.printf("Sending email to %s failed: %s\n", destinationAddress, e);
+            emailSenderService.sendEmail(emailRequest);
+            System.out.printf("Sent %s email to: %s%n", emailRequest.getType(), emailRequest.getAddress());
+        } catch (MessagingException | IOException | TemplateException e) {
+            System.err.printf("Sent email failed: %s", e);
         }
     }
 
