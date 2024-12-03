@@ -6,20 +6,21 @@
  * See LICENSE or visit <https://www.gnu.org/licenses/>.
  */
 
-package com.github.matkubiak.taskplanner.service;
+package com.github.matkubiak.taskplanner.messaging;
 
+import com.github.matkubiak.taskplanner.service.EmailSenderService;
 import com.rabbitmq.client.*;
 import jakarta.mail.MessagingException;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 
-@Service
-public class EventConsumerService implements DisposableBean {
+@Component
+public class EventConsumer implements DisposableBean {
 
     @Autowired
     EmailSenderService emailSenderService;
@@ -30,7 +31,7 @@ public class EventConsumerService implements DisposableBean {
 
     private Connection connection;
 
-    public EventConsumerService(@Value("${rabbitmq.username}") String username, @Value("${rabbitmq.password}") String password) throws Exception {
+    public EventConsumer(@Value("${rabbitmq.username}") String username, @Value("${rabbitmq.password}") String password) throws Exception {
         ConnectionFactory factory = new ConnectionFactory();
         factory.setHost("rabbitmq");
         factory.setUsername(username);
