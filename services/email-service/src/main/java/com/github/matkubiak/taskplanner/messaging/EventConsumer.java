@@ -22,12 +22,12 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
+import java.util.concurrent.TimeoutException;
 
 @Component
 public class EventConsumer implements DisposableBean {
 
-    @Autowired
-    EmailSenderService emailSenderService;
+    private final EmailSenderService emailSenderService;
 
     private final static String QUEUE_NAME = "email";
 
@@ -35,7 +35,13 @@ public class EventConsumer implements DisposableBean {
 
     private Connection connection;
 
-    public EventConsumer(@Value("${rabbitmq.username}") String username, @Value("${rabbitmq.password}") String password) throws Exception {
+    public EventConsumer(
+            @Value("${rabbitmq.username}") String username,
+            @Value("${rabbitmq.password}") String password,
+            EmailSenderService emailSenderService) throws Exception {
+
+        this.emailSenderService = emailSenderService;
+
         ConnectionFactory factory = new ConnectionFactory();
         factory.setHost("rabbitmq");
         factory.setUsername(username);
@@ -50,6 +56,7 @@ public class EventConsumer implements DisposableBean {
         }
 
         DeliverCallback deliverCallback = this::onEvent;
+
         channel.basicConsume(QUEUE_NAME, true, deliverCallback, consumerTag -> { });
     }
 
