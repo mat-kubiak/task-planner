@@ -21,6 +21,7 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 
 @Component
 public class EventConsumer implements DisposableBean {
@@ -53,11 +54,12 @@ public class EventConsumer implements DisposableBean {
     }
 
     private void onEvent(String consumerTag, Delivery delivery) {
-        EmailRequest emailRequest = null;
+        String payload = new String(delivery.getBody(), StandardCharsets.UTF_8);
+
+        EmailRequest emailRequest;
         try {
-            String payload = new String(delivery.getBody(), "UTF-8");
             emailRequest = EmailRequest.fromJson(payload);
-        } catch (JSONException | UnsupportedEncodingException e) {
+        } catch (JSONException e) {
             System.out.printf("Parsing email request failed: %s\n", e);
             return;
         }
