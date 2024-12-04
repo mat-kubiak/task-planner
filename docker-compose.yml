@@ -90,3 +90,14 @@ services:
       - .m2:/root/.m2
     stdin_open: true
     tty: true
+
+  email-service:
+    depends_on:
+      - rabbitmq
+    build: ./services/email-service
+    restart: on-failure
+    env_file: ./.env
+    volumes:
+      - .m2:/root/.m2
+    stdin_open: true
+    tty: true
