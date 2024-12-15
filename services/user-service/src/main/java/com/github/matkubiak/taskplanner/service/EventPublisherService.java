@@ -17,7 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 public class EventPublisherService implements DisposableBean {
@@ -30,7 +30,7 @@ public class EventPublisherService implements DisposableBean {
         }
     }
 
-    private final HashMap<Queue, Channel> channels = new HashMap<>();
+    private final ConcurrentHashMap<Queue, Channel> channels = new ConcurrentHashMap<>();
 
     private Connection connection;
 
