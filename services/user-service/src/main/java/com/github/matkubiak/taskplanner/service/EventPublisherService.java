@@ -48,24 +48,37 @@ public class EventPublisherService implements DisposableBean {
                 channel.queueDeclare(queue.toString(), false, false, false, null);
                 channels.put(queue, channel);
             } catch (IOException e) {
-                System.err.println("RabbitMQ connection failed: " + e);
+                System.err.printf("RabbitMQ connection failed for queue %s: %s\n", queue, e);
             }
         }
     }
 
     public void publish(Queue queue, String message) throws IOException {
-        try {
-            channels.get(queue).basicPublish("", queue.toString(), null, message.getBytes(StandardCharsets.UTF_8));
-        } catch (NullPointerException e) {
+        Channel channel = channels.get(queue);
+        if (channel == null || !channel.isOpen()) {
             throw new IOException(String.format("Cannot publish message, channel %s is down\n", queue.toString()));
         }
+        channel.basicPublish("", queue.toString(), null, message.getBytes(StandardCharsets.UTF_8));
     }
 
     @Override
     public void destroy() throws Exception {
         for (Channel channel : channels.values()) {
-            channel.close();
+            try {
+                if (channel != null && channel.isOpen()) {
+                    channel.close();
+                }
+            } catch (IOException e) {
+                System.err.println("Error closing channel: " + e);
+            }
         }
-        connection.close();
+
+        if (connection != null && connection.isOpen()) {
+            try {
+                connection.close();
+            } catch (IOException e) {
+                System.err.println("Error closing RabbitMQ connection: " + e);
+            }
+        }
     }
 }
