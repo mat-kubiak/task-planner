@@ -17,13 +17,20 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
 
 @Service
 public class EventPublisherService implements DisposableBean {
 
-    private final static String QUEUE_NAME = "deleted_userid";
+    public enum Queue {
+        DELETED_USER, EMAIL;
 
-    private Channel channel;
+        public String toString() {
+            return this.name().toLowerCase();
+        }
+    }
+
+    private final HashMap<Queue, Channel> channels = new HashMap<>();
 
     private Connection connection;
 
@@ -33,26 +40,32 @@ public class EventPublisherService implements DisposableBean {
         factory.setUsername(username);
         factory.setPassword(password);
 
-        try {
-            connection = factory.newConnection();
-            channel = connection.createChannel();
-            channel.queueDeclare(QUEUE_NAME, false, false, false, null);
-        } catch (IOException e) {
-            System.err.println("RabbitMQ connection failed: " + e);
+        connection = factory.newConnection();
+
+        for (Queue queue: Queue.values()) {
+            try {
+                Channel channel = connection.createChannel();
+                channel.queueDeclare(queue.toString(), false, false, false, null);
+                channels.put(queue, channel);
+            } catch (IOException e) {
+                System.err.println("RabbitMQ connection failed: " + e);
+            }
         }
     }
 
-    public void publish(String message) throws IOException {
+    public void publish(Queue queue, String message) throws IOException {
         try {
-            channel.basicPublish("", QUEUE_NAME, null, message.getBytes(StandardCharsets.UTF_8));
+            channels.get(queue).basicPublish("", queue.toString(), null, message.getBytes(StandardCharsets.UTF_8));
         } catch (NullPointerException e) {
-            throw new IOException("Could not publish message, event broker is down");
+            throw new IOException(String.format("Cannot publish message, channel %s is down\n", queue.toString()));
         }
     }
 
     @Override
     public void destroy() throws Exception {
-        channel.close();
+        for (Channel channel : channels.values()) {
+            channel.close();
+        }
         connection.close();
     }
 }
