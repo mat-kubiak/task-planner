@@ -32,7 +32,7 @@ public class EventPublisherService implements DisposableBean {
 
     private final ConcurrentHashMap<Queue, Channel> channels = new ConcurrentHashMap<>();
 
-    private Connection connection;
+    private final Connection connection;
 
     public EventPublisherService(@Value("${rabbitmq.username}") String username, @Value("${rabbitmq.password}") String password) throws Exception {
         ConnectionFactory factory = new ConnectionFactory();
