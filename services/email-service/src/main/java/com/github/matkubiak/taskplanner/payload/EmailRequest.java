@@ -20,7 +20,7 @@ public class EmailRequest {
     private String username;
 
     public enum EmailType {
-        DEBUG,
+        DEBUG, ACCOUNT_CREATED, ACCOUNT_DELETED
     }
 
     public static EmailRequest fromJson(String jsonString) throws JSONException {

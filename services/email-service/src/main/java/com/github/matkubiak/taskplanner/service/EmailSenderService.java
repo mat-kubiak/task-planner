@@ -63,6 +63,14 @@ public class EmailSenderService {
                 templateName = "debug.html";
                 subject = "Debug Message";
             }
+            case ACCOUNT_CREATED -> {
+                templateName = "account_created.html";
+                subject = "Welcome to Task Planner!";
+            }
+            case ACCOUNT_DELETED -> {
+                templateName = "account_deleted.html";
+                subject = "We're sad to see You go!";
+            }
             default -> throw new IllegalStateException("Unexpected EmailRequest type: " + event.getType());
         }
 
