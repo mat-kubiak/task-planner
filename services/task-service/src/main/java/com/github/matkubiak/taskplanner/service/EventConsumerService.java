@@ -30,7 +30,7 @@ public class EventConsumerService implements DisposableBean {
     @Autowired
     private PlatformTransactionManager transactionManager;
 
-    private final static String QUEUE_NAME = "deleted_userid";
+    private final static String QUEUE_NAME = "deleted_user";
 
     private Channel channel;
 
