@@ -44,12 +44,21 @@ public class UserService {
     }
 
     public void deleteAccount(Long userId) throws UserNotFoundException, IOException {
-        if (!userRepository.existsById(userId)) {
-            throw new UserNotFoundException();
-        }
+        User user = userRepository.findById(userId)
+            .orElseThrow(UserNotFoundException::new);
 
-        eventPublisherService.publish(String.valueOf(userId));
+        eventPublisherService.publish(EventPublisherService.Queue.DELETED_USER, String.valueOf(userId));
         userRepository.deleteById(userId);
+
+        String template = """
+                          {
+                            "type": "ACCOUNT_DELETED",
+                            "address": "%s",
+                            "username": "%s",
+                          }
+                          """;
+        String emailEvent = String.format(template, user.getEmail(), user.getEmail());
+        eventPublisherService.publish(EventPublisherService.Queue.EMAIL, emailEvent);
     }
 
 }
