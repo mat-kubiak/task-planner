@@ -36,6 +36,7 @@ services:
 
   rabbitmq:
     image: rabbitmq:4.0-management-alpine
+    restart: unless-stopped
     ports:
       - 8082:15672
     env_file: ./.env
@@ -45,14 +46,10 @@ services:
 
   gateway:
     build: ./gateway
-    restart: on-failure
+    restart: unless-stopped
     env_file: ./.env
     ports:
       - $GATEWAY_EXPOSE_PORT:8080
-    volumes:
-      - .m2:/root/.m2
-    stdin_open: true
-    tty: true
 
   # services
 
@@ -61,43 +58,27 @@ services:
       - mysqldb
       - rabbitmq
     build: ./services/task-service
-    restart: on-failure
+    restart: unless-stopped
     env_file: ./.env
-    volumes:
-      - .m2:/root/.m2
-    stdin_open: true
-    tty: true
 
   auth-service:
     depends_on:
       - mysqldb
     build: ./services/auth-service
-    restart: on-failure
+    restart: unless-stopped
     env_file: ./.env
-    volumes:
-      - .m2:/root/.m2
-    stdin_open: true
-    tty: true
 
   user-service:
     depends_on:
       - mysqldb
       - rabbitmq
     build: ./services/user-service
-    restart: on-failure
+    restart: unless-stopped
     env_file: ./.env
-    volumes:
-      - .m2:/root/.m2
-    stdin_open: true
-    tty: true
 
   email-service:
     depends_on:
       - rabbitmq
     build: ./services/email-service
-    restart: on-failure
+    restart: unless-stopped
     env_file: ./.env
-    volumes:
-      - .m2:/root/.m2
-    stdin_open: true
-    tty: true
